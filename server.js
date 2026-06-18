@@ -31,4 +31,4 @@ http.createServer((req, res) => {
     });
     res.end(data);
   });
-}).listen(PORT, '127.0.0.1', () => console.log(`MDS Concept dev szerver: http://127.0.0.1:${PORT}`));
+}).listen(PORT, '127.0.0.1', () => console.log(`MDS Parfümszalon dev szerver: http://127.0.0.1:${PORT}`));

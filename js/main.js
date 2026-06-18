@@ -1,4 +1,4 @@
-/* MDS Concept — interakciók (GSAP + ScrollTrigger + Lenis) */
+/* MDS Parfümszalon — interakciók (GSAP + ScrollTrigger + Lenis) */
 
 import { createScene } from './scene.js';
 

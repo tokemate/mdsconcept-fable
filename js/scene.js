@@ -1,4 +1,4 @@
-/* MDS Concept — Three.js illatköd a hero szekcióban.
+/* MDS Parfümszalon — Three.js illatköd a hero szekcióban.
    Lassan felfelé gomolygó, arany partikula-pára; egér-parallaxe,
    görgetésre elhalványul. Mobilon kevesebb partikula, alacsonyabb DPR. */
 
