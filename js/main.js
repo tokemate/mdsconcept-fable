@@ -5,6 +5,7 @@ import { createScene } from './scene.js';
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
 const hasGsap = typeof window.gsap !== 'undefined' && typeof window.ScrollTrigger !== 'undefined';
+const isPreview = new URLSearchParams(window.location.search).has('preview');
 
 const $ = (s, c = document) => c.querySelector(s);
 const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
@@ -36,10 +37,16 @@ const scene = reduced ? { setPointer() {}, setProgress() {} } : createScene($('#
 if (reduced) { const c = $('#scene'); if (c) c.style.display = 'none'; }
 
 if (!hasGsap || reduced) {
-  // Tartalék: animációk nélkül is minden olvasható
-  const pre = $('.preloader');
-  if (pre) pre.remove();
-  document.documentElement.classList.remove('is-loading');
+  if (isPreview) {
+    const pre = $('.preloader');
+    if (pre) pre.remove();
+    document.documentElement.classList.remove('is-loading');
+  } else {
+    const num = document.querySelector('.preloader-num');
+    if (num) num.textContent = '99';
+    const soon = document.querySelector('.preloader-soon');
+    if (soon) soon.style.opacity = '1';
+  }
 } else {
   init();
 }
@@ -87,28 +94,42 @@ function init() {
     lenis.start();
     ScrollTrigger.refresh();
   };
-  const intro = gsap.timeline({ onComplete: finishIntro });
 
-  intro
-    .from('.preloader-mark', { autoAlpha: 0, y: 24, duration: 0.7 })
-    .to(counter, {
-      v: 100,
-      duration: 1.15,
-      ease: 'power2.inOut',
-      onUpdate() { $('.preloader-num').textContent = Math.round(counter.v); },
-    }, '<')
-    .to('.preloader-inner', { autoAlpha: 0, y: -20, duration: 0.45 }, '+=0.1')
-    .to(pre, { yPercent: -100, duration: 0.85, ease: 'power4.inOut' }, '-=0.15')
-    .to(heroLines, { yPercent: 0, duration: 1.15, ease: 'power4.out', stagger: 0.11 }, '-=0.4')
-    .to('.hero-eyebrow', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.85')
-    .to('.hero-sub', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.65')
-    .to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.6')
-    .to('.hero-foot', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.55')
-    .to('.site-header', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.7');
+  if (!isPreview) {
+    /* ---- Hamarosan mód: megáll 99%-nál ---- */
+    gsap.set('.preloader-soon', { autoAlpha: 0, y: 16 });
+    gsap.timeline()
+      .from('.preloader-mark', { autoAlpha: 0, y: 24, duration: 0.7 })
+      .to(counter, {
+        v: 99,
+        duration: 1.5,
+        ease: 'power2.inOut',
+        onUpdate() { $('.preloader-num').textContent = Math.round(counter.v); },
+      }, '<')
+      .to('.preloader-soon', { autoAlpha: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '+=0.4');
+  } else {
+    /* ---- Preview mód: normál bevezetés ---- */
+    const intro = gsap.timeline({ onComplete: finishIntro });
+    intro
+      .from('.preloader-mark', { autoAlpha: 0, y: 24, duration: 0.7 })
+      .to(counter, {
+        v: 100,
+        duration: 1.15,
+        ease: 'power2.inOut',
+        onUpdate() { $('.preloader-num').textContent = Math.round(counter.v); },
+      }, '<')
+      .to('.preloader-inner', { autoAlpha: 0, y: -20, duration: 0.45 }, '+=0.1')
+      .to(pre, { yPercent: -100, duration: 0.85, ease: 'power4.inOut' }, '-=0.15')
+      .to(heroLines, { yPercent: 0, duration: 1.15, ease: 'power4.out', stagger: 0.11 }, '-=0.4')
+      .to('.hero-eyebrow', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.85')
+      .to('.hero-sub', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.65')
+      .to('.hero-actions', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.6')
+      .to('.hero-foot', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.55')
+      .to('.site-header', { autoAlpha: 1, y: 0, duration: 0.8 }, '-=0.7');
 
-  // Háttérfülben megnyitott lapnál a rAF szünetel — ne ragadjon be a preloader
-  if (document.hidden) intro.progress(1);
-  setTimeout(() => { if (!introDone) intro.progress(1); }, 6000);
+    if (document.hidden) intro.progress(1);
+    setTimeout(() => { if (!introDone) intro.progress(1); }, 6000);
+  }
 
   /* ---------- Fejléc állapot ---------- */
   ScrollTrigger.create({

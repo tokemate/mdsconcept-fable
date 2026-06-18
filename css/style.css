@@ -122,6 +122,13 @@ body.has-cursor .cursor { display: block; }
   color: var(--muted);
 }
 .preloader-num::after { content: '%'; margin-left: 2px; opacity: 0.6; }
+.preloader-soon {
+  margin-top: 2.2rem;
+  font: italic 300 clamp(1.6rem, 4vw, 2.4rem)/1 var(--serif);
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  opacity: 0;
+}
 
 /* ---------- Fejléc ---------- */
 .site-header {
