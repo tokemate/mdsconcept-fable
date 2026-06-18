@@ -22,7 +22,7 @@ if (contactForm) {
     const email = contactForm.elements.email.value.trim();
     const message = contactForm.elements.message.value.trim();
     const body = `Név: ${name}\nE-mail: ${email}\n\n${message}`;
-    const url = 'mailto:hello@mdsconcept.hu'
+    const url = 'mailto:parfum@mdsconcept.hu'
       + '?subject=' + encodeURIComponent('Kapcsolatfelvétel — ' + name)
       + '&body=' + encodeURIComponent(body);
     const status = contactForm.querySelector('.form-status');
